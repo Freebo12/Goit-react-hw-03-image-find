@@ -27,6 +27,7 @@ export class SearchBar extends Component {
     }
     this.props.onSearch(this.state.value);
     this.setState({ value: '' });
+    console.log(this.state.value);
   };
 
   render() {

@@ -24,9 +24,16 @@ export class ImageGallery extends Component {
         .then(response => response.json())
         .then(image => {
           this.setState({
-            image: [...this.state.image, ...image.hits],
+            image: [...image.hits],
             status: 'resolved',
           });
+          if (prevState.page !== this.state.page) {
+            this.setState({
+              image: [...this.state.image, ...image.hits],
+            });
+            console.log(image.hits);
+            return;
+          }
         })
         .catch(
           (error => console.log(error), this.setState({ status: 'pending' }))
@@ -35,16 +42,11 @@ export class ImageGallery extends Component {
   }
 
   handleLoadMore = e => {
-    this.setState(prev => ({ page: prev.page + 1 }));
-    // if (this.status !== 'resolved') {
-    //   console.log('test');
-    //   window.scrollTo(0, 0);
-    //    e.preventDefault();
-    //    e.stopPropagation();
-    // }
+    const { status, image } = this.state;
+    this.setState(prev => ({
+      page: prev.page + 1,
+    }));
   };
-
-  
 
   render() {
     const { status, image } = this.state;
