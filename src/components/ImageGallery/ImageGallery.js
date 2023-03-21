@@ -42,7 +42,6 @@ export class ImageGallery extends Component {
   }
 
   handleLoadMore = e => {
-    const { status, image } = this.state;
     this.setState(prev => ({
       page: prev.page + 1,
     }));
