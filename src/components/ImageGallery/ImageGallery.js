@@ -1,12 +1,9 @@
 import { Component } from 'react';
 import { getImage } from 'services/getImage';
-import PropTypes from 'prop-types';
 
 import { Loader } from 'components/Loader/Loader';
 import { BtnLoadMore } from 'components/Button/Button';
 import { GalleryList } from '../GalleryList/GalleryList';
-
-const controller = new AbortController();
 
 export class ImageGallery extends Component {
   state = {
@@ -26,7 +23,6 @@ export class ImageGallery extends Component {
 
     const prevPage = prevState.page;
     const newPage = this.state.page;
-    const ImgLength = this.state.image;
     if (prevName !== nextName) {
       this.setState({ status: 'pending' });
       this.setState({ page: 1 });
@@ -66,7 +62,7 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { status, image, textSearch } = this.state;
+    const { status, image } = this.state;
     const { onZoom } = this.props;
 
     if (status === 'pending') {
