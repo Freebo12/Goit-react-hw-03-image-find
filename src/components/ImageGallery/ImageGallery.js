@@ -21,48 +21,44 @@ export class ImageGallery extends Component {
     const prevName = prevProps.textSearch.trim();
     const nextName = this.props.textSearch.trim();
 
-    const prevPage = prevState.page;
-    const newPage = this.state.page;
     if (prevName !== nextName) {
       this.setState({ status: 'pending' });
       this.setState({ page: 1 });
+      this.setState({ image: null });
 
-      getImage(nextName, page, imagesOnPage)
+      getImage(nextName, 1)
         .then(response => response.json())
         .then(image => {
-          this.setState({
-            image: [...image.hits],
-            status: 'resolved',
-          });
+          if (image.hits.length !== 0) {
+            return this.setState({
+              image: [...image.hits],
+              status: 'resolved',
+              page: 1,
+            });
+          }
         })
-        .catch(
-          (error => console.log(error), this.setState({ status: 'pending' }))
-        );
-    }
-    if (prevPage !== newPage && newPage !== '') {
-      getImage(nextName, page, imagesOnPage)
-        .then(response => response.json())
-        .then(image => {
-          this.setState(prevState => ({
-            image: [...prevState.image, ...image.hits],
-            status: 'resolved',
-          }));
-        })
-
         .catch(
           (error => console.log(error), this.setState({ status: 'pending' }))
         );
     }
   }
 
-  handleLoadMore = () => {
-    this.setState(prevState => {
-      return { page: prevState.page + 1 };
-    });
+  handleLoadMore = (prevState, prevProps) => {
+    getImage(this.props.value, this.state.page + 1)
+      .then(resp => resp.json())
+      .then(image => {
+        console.log(image.hits);
+        if (image.length !== 0) {
+          this.setState(prev => ({
+            page: this.state.page + 1,
+            image: [...this.state.image, ...image.hits],
+          }));
+        }
+      });
   };
 
   render() {
-    const { status, image } = this.state;
+    const { status, image, page } = this.state;
     const { onZoom } = this.props;
 
     if (status === 'pending') {
