@@ -16,7 +16,6 @@ export class ImageGallery extends Component {
   };
 
   componentDidUpdate(prevProps, prevState) {
-    const { page, imagesOnPage } = this.state;
 
     const prevName = prevProps.textSearch.trim();
     const nextName = this.props.textSearch.trim();
@@ -58,7 +57,7 @@ export class ImageGallery extends Component {
   };
 
   render() {
-    const { status, image, page } = this.state;
+    const { status, image,} = this.state;
     const { onZoom } = this.props;
 
     if (status === 'pending') {
