@@ -6,49 +6,67 @@ import { Loader } from 'components/Loader/Loader';
 import { BtnLoadMore } from 'components/Button/Button';
 import { GalleryList } from '../GalleryList/GalleryList';
 
+const controller = new AbortController();
+
 export class ImageGallery extends Component {
   state = {
     image: [],
     page: 1,
     error: '',
     status: 'idle',
+    searcImage: '',
+    imagesOnPage: '',
   };
 
   componentDidUpdate(prevProps, prevState) {
-    if (
-      prevProps.value !== this.props.value ||
-      prevState.page !== this.state.page
-    ) {
-      this.setState({ status: 'reject' });
-      getImage(this.props.value, this.state.page)
+    const { page, imagesOnPage } = this.state;
+
+    const prevName = prevProps.textSearch.trim();
+    const nextName = this.props.textSearch.trim();
+
+    const prevPage = prevState.page;
+    const newPage = this.state.page;
+    const ImgLength = this.state.image;
+    if (prevName !== nextName) {
+      this.setState({ status: 'pending' });
+      this.setState({ page: 1 });
+
+      getImage(nextName, page, imagesOnPage)
         .then(response => response.json())
         .then(image => {
           this.setState({
             image: [...image.hits],
             status: 'resolved',
           });
-          if (prevState.page !== this.state.page) {
-            this.setState({
-              image: [...this.state.image, ...image.hits],
-            });
-            console.log(image.hits);
-            return;
-          }
         })
+        .catch(
+          (error => console.log(error), this.setState({ status: 'pending' }))
+        );
+    }
+    if (prevPage !== newPage && newPage !== '') {
+      getImage(nextName, page, imagesOnPage)
+        .then(response => response.json())
+        .then(image => {
+          this.setState(prevState => ({
+            image: [...prevState.image, ...image.hits],
+            status: 'resolved',
+          }));
+        })
+
         .catch(
           (error => console.log(error), this.setState({ status: 'pending' }))
         );
     }
   }
 
-  handleLoadMore = e => {
-    this.setState(prev => ({
-      page: prev.page + 1,
-    }));
+  handleLoadMore = () => {
+    this.setState(prevState => {
+      return { page: prevState.page + 1 };
+    });
   };
 
   render() {
-    const { status, image } = this.state;
+    const { status, image, textSearch } = this.state;
     const { onZoom } = this.props;
 
     if (status === 'pending') {
@@ -68,9 +86,3 @@ export class ImageGallery extends Component {
     }
   }
 }
-
-ImageGallery.prorTypes = {
-  value: PropTypes.string.isRequired,
-  onSelect: PropTypes.func.isRequired,
-  onZoom: PropTypes.func.isRequired,
-};

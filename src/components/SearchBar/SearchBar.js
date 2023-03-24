@@ -22,12 +22,13 @@ export class SearchBar extends Component {
 
   hadleSubmit = evt => {
     evt.preventDefault();
-    if (!this.state.value) {
+    if (!this.state.value !== '') {
+      this.props.onSearch(this.state.value);
+      this.setState({ value: '' });
+      console.log(this.state.value);
+    } else {
       return toast.error('Write something', {});
     }
-    this.props.onSearch(this.state.value);
-    this.setState({ value: '' });
-    console.log(this.state.value);
   };
 
   render() {
@@ -54,3 +55,14 @@ export class SearchBar extends Component {
 SearchBar.propTypes = {
   onSearch: PropTypes.func.isRequired,
 };
+
+// export const Searchbar = ({ onAddnewQueryName }) => {
+//   const hendleSubmit = (value, { resetForm }) => {
+//     if (value.queryName.trim() !== '') {
+//       console.log({ ...value });
+//       onAddnewQueryName({ ...value });
+//       resetForm();
+//     } else {
+//       toast.error('Please enter a valid image title...');
+//     }
+//   };

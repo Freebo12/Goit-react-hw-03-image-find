@@ -44,6 +44,7 @@ export class App extends Component {
   };
 
   render() {
+    const { textSearch } = this.state;
     return (
       <SectionApp>
         <GlobalStyle />
@@ -59,7 +60,11 @@ export class App extends Component {
           }}
         />
         <SearchBar onSearch={this.handleSubmit} />
-        <ImageGallery value={this.state.textSearch} onZoom={this.selectImage} />
+        <ImageGallery
+          value={this.state.textSearch}
+          onZoom={this.selectImage}
+          textSearch={textSearch}
+        />
         {this.state.selectedImage && (
           <Modal img={this.state.selectedImage} onClose={this.BackdropClick} />
         )}
